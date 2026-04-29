@@ -4,76 +4,77 @@ class Program
 {
     static void Main(string[] args)
     {
-        bool playAgain = true;
+        Random rand = new Random();
+        bool playing = true;
 
-        while (playAgain)
+        while (playing)
         {
+            int playerHealth = 100;
+            int enemyHealth = 100;
+
             Console.Clear();
-            Console.WriteLine("===== NUMBER GUESSING GAME =====");
-            Console.WriteLine("Select Difficulty:");
-            Console.WriteLine("1. Easy (1-10)");
-            Console.WriteLine("2. Medium (1-50)");
-            Console.WriteLine("3. Hard (1-100)");
-            Console.Write("Choice: ");
+            Console.WriteLine("===== SIMPLE RPG BATTLE =====");
+            Console.WriteLine("You encountered an enemy!\n");
 
-            int maxNumber = 10;
-
-            switch (Console.ReadLine())
+            while (playerHealth > 0 && enemyHealth > 0)
             {
-                case "1":
-                    maxNumber = 10;
-                    break;
-                case "2":
-                    maxNumber = 50;
-                    break;
-                case "3":
-                    maxNumber = 100;
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Defaulting to Easy.");
-                    break;
-            }
+                Console.WriteLine($"Your Health: {playerHealth} | Enemy Health: {enemyHealth}");
+                Console.WriteLine("1. Attack");
+                Console.WriteLine("2. Heal");
+                Console.WriteLine("3. Run");
+                Console.Write("Choose an action: ");
 
-            Random rand = new Random();
-            int secretNumber = rand.Next(1, maxNumber + 1);
-            int attempts = 0;
-            bool guessedCorrectly = false;
+                string choice = Console.ReadLine();
+                Console.WriteLine();
 
-            Console.WriteLine($"\nI'm thinking of a number between 1 and {maxNumber}...");
-
-            while (!guessedCorrectly)
-            {
-                Console.Write("Enter your guess: ");
-                string input = Console.ReadLine();
-
-                if (int.TryParse(input, out int guess))
+                if (choice == "1") // Attack
                 {
-                    attempts++;
+                    int playerDamage = rand.Next(10, 21);
+                    int enemyDamage = rand.Next(5, 16);
 
-                    if (guess == secretNumber)
-                    {
-                        Console.WriteLine($"\n🎉 Correct! You guessed it in {attempts} attempts.");
-                        guessedCorrectly = true;
-                    }
-                    else if (guess < secretNumber)
-                    {
-                        Console.WriteLine("Too low!");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Too high!");
-                    }
+                    enemyHealth -= playerDamage;
+                    playerHealth -= enemyDamage;
+
+                    Console.WriteLine($"You dealt {playerDamage} damage!");
+                    Console.WriteLine($"Enemy dealt {enemyDamage} damage!");
+                }
+                else if (choice == "2") // Heal
+                {
+                    int healAmount = rand.Next(10, 21);
+                    int enemyDamage = rand.Next(5, 16);
+
+                    playerHealth += healAmount;
+                    playerHealth -= enemyDamage;
+
+                    Console.WriteLine($"You healed {healAmount} health!");
+                    Console.WriteLine($"Enemy attacked for {enemyDamage} damage!");
+                }
+                else if (choice == "3") // Run
+                {
+                    Console.WriteLine("You ran away!");
+                    break;
                 }
                 else
                 {
-                    Console.WriteLine("Please enter a valid number.");
+                    Console.WriteLine("Invalid choice.");
                 }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
+            }
+
+            if (playerHealth <= 0)
+            {
+                Console.WriteLine("💀 You were defeated...");
+            }
+            else if (enemyHealth <= 0)
+            {
+                Console.WriteLine("🏆 You defeated the enemy!");
             }
 
             Console.Write("\nPlay again? (y/n): ");
-            string again = Console.ReadLine().ToLower();
-
-            playAgain = again == "y";
+            playing = Console.ReadLine().ToLower() == "y";
         }
 
         Console.WriteLine("\nThanks for playing!");
